@@ -1,0 +1,37 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
+  const response = await axios.get("http://localhost:3000/users");
+  return response.data;
+});
+
+const usersSlice = createSlice({
+  name: "users",
+  initialState: { data: [], loading: false },
+  reducers: {
+    addUser: (state, action) => {
+      state.data.push(action.payload);
+    },
+    editUser: (state, action) => {
+      const index = state.data.findIndex((u) => u.id === action.payload.id);
+      if (index !== -1) state.data[index] = action.payload;
+    },
+    deleteUser: (state, action) => {
+      state.data = state.data.filter((u) => u.id !== action.payload);
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUsers.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      });
+  },
+});
+
+export const { addUser, editUser, deleteUser } = usersSlice.actions;
+export default usersSlice.reducer;
