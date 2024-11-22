@@ -1,0 +1,43 @@
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchRoles, deleteRole } from "../redux/rolesSlice";
+
+const RoleTable = () => {
+  const dispatch = useDispatch();
+  const { data: roles, loading } = useSelector((state) => state.roles);
+
+  useEffect(() => {
+    dispatch(fetchRoles());
+  }, [dispatch]);
+
+  const handleDelete = (id) => {
+    dispatch(deleteRole(id));
+  };
+
+  if (loading) return <p>Loading...</p>;
+
+  return (
+    <table className="table-auto w-full border">
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {roles.map((role) => (
+          <tr key={role.id}>
+            <td>{role.name}</td>
+            <td>{role.description}</td>
+            <td>
+              <button onClick={() => handleDelete(role.id)}>Delete</button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+export default RoleTable;
