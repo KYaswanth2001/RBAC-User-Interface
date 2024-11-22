@@ -1,0 +1,45 @@
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchUsers, deleteUser } from "../redux/usersSlice";
+
+const UserTable = () => {
+  const dispatch = useDispatch();
+  const { data: users, loading } = useSelector((state) => state.users);
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
+
+  const handleDelete = (id) => {
+    dispatch(deleteUser(id));
+  };
+
+  if (loading) return <p>Loading...</p>;
+
+  return (
+    <table className="table-auto w-full border">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {users.map((user) => (
+          <tr key={user.id}>
+            <td>{user.name}</td>
+            <td>{user.email}</td>
+            <td>{user.role}</td>
+            <td>
+              <button onClick={() => handleDelete(user.id)}>Delete</button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+export default UserTable;
